@@ -1,11 +1,16 @@
-const req = require("express/lib/request");
-const Categories = require("./model");
+const statusCodes = require("http-status-codes");
+const {
+  getAllCategories,
+  createCategories,
+  getOneCategories,
+  updateCategories,
+  deleteCategories,
+} = require("../../../services/mongoose/categories");
 
 const create = async (req, res, next) => {
   try {
-    const { name } = req.body;
-    const result = await Categories.create({ name });
-    res.status(201).json({
+    const result = await createCategories(req);
+    res.status(statusCodes.CREATED).json({
       data: result,
     });
   } catch (error) {
@@ -15,8 +20,8 @@ const create = async (req, res, next) => {
 
 const index = async (req, res, next) => {
   try {
-    const result = await Categories.find().select("_id name");
-    res.status(200).json({
+    const result = await getAllCategories();
+    res.status(statusCodes.OK).json({
       data: result,
     });
   } catch (error) {
@@ -26,9 +31,30 @@ const index = async (req, res, next) => {
 
 const find = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const result = await Categories.findById(id);
-    res.status(200).json({ data: result });
+    const result = await getOneCategories(req);
+    res.status(statusCodes.OK).json({ data: result });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const update = async (req, res, next) => {
+  try {
+    const result = await updateCategories(req);
+    res.status(statusCodes.OK).json({
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const destroy = async (req, res, next) => {
+  try {
+    const result = await deleteCategories(req);
+    res.status(statusCodes.OK).json({
+      data: result,
+    });
   } catch (error) {
     next(error);
   }
@@ -37,5 +63,7 @@ const find = async (req, res, next) => {
 module.exports = {
   create,
   index,
+  update,
   find,
+  destroy,
 };

@@ -8,7 +8,10 @@ const app = express();
 
 // router
 const categoriesRouter = require("./app/api/v2/categories/router");
+const imagesRouter = require("./app/api/v2/images/router");
 const v2 = "/api/v2/cms";
+const notFoundMiddleware = require("./app/middlewares/not-found.js");
+const handleErrorMiddleware = require("./app/middlewares/handler-error.js");
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -21,6 +24,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(v2, categoriesRouter);
+app.use(v2, imagesRouter);
+app.use(notFoundMiddleware);
+app.use(handleErrorMiddleware);
 
 app.get("/", (req, res, next) => {
   res.status(200).json({
